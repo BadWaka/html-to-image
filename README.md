@@ -206,6 +206,50 @@ htmlToImage.toPng(node, {filter:filter})
 
 Not called on the root node.
 
+### preprocess
+
+```ts
+(domNode: HTMLElement) => domNode
+```
+
+A function taking DOM node as argument. Should return DOM node.
+
+Before rendering the DOM to a Canvas, users can make any custom modifications to the DOM and its child elements to meet specific screenshot requirements.
+
+For example, the screenshot’s style and the DOM itself may differ, and users may not want to affect the original DOM’s style.
+
+```ts
+// Recursively obtain all child nodes of a DOM node.
+function getAllChildNodes(node) {
+    let allNodes = [];
+    if (node.hasChildNodes()) {
+        node.childNodes.forEach(child => {
+            allNodes.push(child);
+            allNodes = allNodes.concat(getAllChildNodes(child));
+        });
+    }
+    return allNodes;
+}
+
+htmlToImage.toPng(node, {
+  preprocess: (node: HTMLElement) => {
+    const children = getAllChildNodes(node);
+    children.forEach(childNode => {
+        // Set the border color opacity of elements with the class 'textbox' to 0.
+        if (
+            childNode
+            && childNode.classList
+            && childNode.classList.value
+            && childNode.classList.value.indexOf('textbox') !== -1
+        ) {
+            node.style.borderColor = 'rgba(255, 255, 255, 0)';
+        }
+    });
+    return node;
+  }
+});
+```
+
 ### backgroundColor
 
 A string value for the background color, any valid CSS color value.
