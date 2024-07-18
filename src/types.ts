@@ -91,4 +91,11 @@ export interface Options {
    *
    */
   fetchRequestInit?: RequestInit
+
+  /**
+   * A function taking DOM node as argument. Should return DOM node.
+   * Before rendering the DOM to a Canvas, users can make any custom modifications to the DOM and its child elements to meet specific screenshot requirements.
+   * For example, the screenshot’s style and the DOM itself may differ, and users may not want to affect the original DOM’s style.
+   */
+  preprocess?: (domNode: HTMLElement) => HTMLElement
 }

@@ -17,9 +17,13 @@ export async function toSvg<T extends HTMLElement>(
   options: Options = {},
 ): Promise<string> {
   const { width, height } = getImageSize(node, options)
-  const clonedNode = (await cloneNode(node, options, true)) as HTMLElement
+  let clonedNode = (await cloneNode(node, options, true)) as HTMLElement
   await embedWebFonts(clonedNode, options)
   await embedImages(clonedNode, options)
+  // preprocess clonedNode
+  if (options.preprocess) {
+    clonedNode = options.preprocess(clonedNode)
+  }
   applyStyle(clonedNode, options)
   const datauri = await nodeToDataURL(clonedNode, width, height)
   return datauri
